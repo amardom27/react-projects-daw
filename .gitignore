@@ -1,0 +1,41 @@
+# Node modules (paquetes instalados)
+node_modules/
+
+# Builds de producción
+build/
+
+# Archivos de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Reportes de errores del sistema
+*.log
+
+# Archivos de lock (si usas solo uno, ignora los otros)
+# Puedes elegir solo uno según tu gestor de paquetes
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Cache de herramientas
+.cache/
+.npm/
+.yarn/
+.pnp.*
+.vscode/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Imágenes en carpetas 'images'
+**/images/**
