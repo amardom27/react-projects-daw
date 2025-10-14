@@ -39,3 +39,14 @@ Thumbs.db
 
 # Imágenes en carpetas 'images'
 **/images/**
+
+# Todas las rutas de las imagenes
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.ico
+*.webp
+*.svg
