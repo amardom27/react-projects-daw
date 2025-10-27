@@ -28,8 +28,11 @@ class App extends Component {
           descripcion: "Rey visigodo que tuvo un reinado breve y polémico, conocido por su gobierno tiránico en el año 415."
         },
       ],
-      newImage: null
     }
+  }
+
+  estaRepetido = (nombre) => {
+    return this.state.godos.filter((g) => g.nombre === nombre).length > 0;
   }
 
   /**
@@ -39,8 +42,6 @@ class App extends Component {
   agregarGodo = (event) => {
     event.preventDefault();
 
-    console.log(event);
-
     const nombre = event.target.nombre.value.trim();
     const imgSrc = event.target.imagen.value.trim();
     const descripcion = event.target.descripcion.value.trim();
@@ -49,12 +50,14 @@ class App extends Component {
       return;
     }
 
+    if (this.estaRepetido(nombre)) {
+      return;
+    }
+
     const lastId = this.state.godos.length > 0 ? this.state.godos[this.state.godos.length - 1].id : 0;
     const nuevoObj = { id: lastId + 1, nombre, imgSrc, descripcion };
 
-    this.setState((prev) => ({
-      godos: [...prev.godos, nuevoObj]
-    }))
+    this.setState((prev) => ({ godos: [...prev.godos, nuevoObj] }))
 
     event.target.reset();
   }
@@ -63,8 +66,6 @@ class App extends Component {
     const nuevoArr = this.state.godos.filter((g) => g.id !== id);
     this.setState({ godos: nuevoArr });
   }
-
-  // TODO: Hacer que se pueda subir una imagen
 
   render() {
     return (

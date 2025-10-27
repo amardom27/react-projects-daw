@@ -14,13 +14,13 @@ function FormGodo({ callback }) {
       </div>
 
       <div className="mb-3">
-        <label htmlFor="imagen" className="form-label">Imagen:</label>
-        <input type="text" className="form-control" name="imagen" id="imagen" placeholder="URL de la imagen" />
+        <label htmlFor="descripcion" className="form-label">Descripción:</label>
+        <input type="text" className="form-control" name="descripcion" id="descripcion" placeholder="Una pequeña descripcion" />
       </div>
 
       <div className="mb-3">
-        <label htmlFor="descripcion" className="form-label">Descripción:</label>
-        <input type="text" className="form-control" name="descripcion" id="descripcion" placeholder="Una pequeña descripcion" />
+        <label htmlFor="imagen" className="form-label">Imagen:</label>
+        <input type="text" className="form-control" name="imagen" id="imagen" placeholder="URL de la imagen" />
       </div>
 
       <button type="submit" className="btn btn-primary">Guardar</button>
