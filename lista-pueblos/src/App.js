@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Component } from 'react';
-import { Button, Container, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Button, Container, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
 import './App.css';
 
 
@@ -37,14 +37,10 @@ function DetallePueblo({ pueblo }) {
 }
 
 function FormAgregarPueblo({ callback }) {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    callback(event);
-  }
   return (
     <Container fluid className="mt-4">
       <h2>Agregar un nuevo pueblo</h2>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={(event) => callback(event)}>
         <FormGroup>
           <Label for="nombre">Nombre del Pueblo:</Label>
           <Input
@@ -85,7 +81,6 @@ function FormAgregarPueblo({ callback }) {
       </Form>
     </Container>
   )
-
 }
 
 class App extends Component {
@@ -100,9 +95,14 @@ class App extends Component {
         { nombre: "Fuengirola", poblacion: 86305, superficie_km2: 24.7, visitado: false },
       ],
       detalle: null,
+      mensajeAlerta: "",
     }
   }
 
+  /**
+   * 
+   * @param {string} nombre 
+   */
   seleccionarPueblo = (nombre) => {
     const nuevoArr = [...this.state.pueblos];
 
@@ -125,20 +125,33 @@ class App extends Component {
     const poblacion = event.target.poblacion.value.trim();
     const superficie = event.target.superficie.value.trim();
 
+    // Comprobar que no esten vacios
     if (!nombre || !poblacion || !superficie) {
+      this.setState({ mensajeAlerta: "NO puede haber campos vacíos." });
+      return;
+    }
+
+    // Que no esten repetidos
+    if (this.state.pueblos.find((p) => p.nombre === nombre) !== undefined) {
+      this.setState({ mensajeAlerta: "NO puede haber nombres repetidos." });
       return;
     }
 
     const poblacionInt = parseInt(poblacion);
     const superficieInt = parseFloat(superficie);
 
+    // Que no sean negativos
     if (poblacionInt < 0 || superficieInt < 0) {
+      this.setState({ mensajeAlerta: "NO puede haber valores negativos." });
       return;
     }
 
     const nuevoObj = { nombre, poblacion: poblacionInt, superficie_km2: superficieInt, visitado: false };
 
-    this.setState((prev) => ({ pueblos: [...prev.pueblos, nuevoObj] }));
+    this.setState((prev) => ({
+      pueblos: [...prev.pueblos, nuevoObj],
+      mensajeAlerta: ""
+    }));
 
     event.target.reset();
   }
@@ -147,13 +160,18 @@ class App extends Component {
     const pueblo = this.state.pueblos.find((p) => p.nombre === this.state.detalle);
 
     return (
-      <div className="App" >
+      <div className="App">
         <h1>Lista de pueblos</h1>
         <MostarPueblos pueblos={this.state.pueblos} seleccionado={this.state.detalle} handleClick={this.seleccionarPueblo} />
         {this.state.detalle &&
           <DetallePueblo pueblo={pueblo} />
         }
         <FormAgregarPueblo callback={this.agregarPueblo} />
+        {this.state.mensajeAlerta !== "" &&
+          <Alert color="danger" className='my-4 mx-2'>
+            {this.state.mensajeAlerta}
+          </Alert>
+        }
       </div >
     );
   }
