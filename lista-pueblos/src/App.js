@@ -4,13 +4,13 @@ import { Button, Container, Form, FormGroup, Label, Input } from 'reactstrap';
 import './App.css';
 
 
-function MostarPueblos({ pueblos, seleccionado, handleClick, visitados }) {
+function MostarPueblos({ pueblos, seleccionado, handleClick }) {
   return (
     <>
       {pueblos.map((p, i) => {
         let color = "secondary";
 
-        if (visitados.includes(p.nombre)) {
+        if (p.visitado) {
           color = "success";
         }
 
@@ -36,11 +36,15 @@ function DetallePueblo({ pueblo }) {
   )
 }
 
-function FormAgregarPueblo() {
+function FormAgregarPueblo({ callback }) {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    callback(event);
+  }
   return (
     <Container fluid className="mt-4">
       <h2>Agregar un nuevo pueblo</h2>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label for="nombre">Nombre del Pueblo:</Label>
           <Input
@@ -89,29 +93,54 @@ class App extends Component {
     super(props);
     this.state = {
       pueblos: [
-        { nombre: "Málaga", poblacion: 591637, superficie_km2: 398.25 },
-        { nombre: "Marbella", poblacion: 159874, superficie_km2: 116.3 },
-        { nombre: "Benalmádena", poblacion: 73160, superficie_km2: 26.87 },
-        { nombre: "Mijas", poblacion: 91977, superficie_km2: 148.7 },
-        { nombre: "Fuengirola", poblacion: 86305, superficie_km2: 24.7 },
+        { nombre: "Málaga", poblacion: 591637, superficie_km2: 398.25, visitado: false },
+        { nombre: "Marbella", poblacion: 159874, superficie_km2: 116.3, visitado: false },
+        { nombre: "Benalmádena", poblacion: 73160, superficie_km2: 26.87, visitado: false },
+        { nombre: "Mijas", poblacion: 91977, superficie_km2: 148.7, visitado: false },
+        { nombre: "Fuengirola", poblacion: 86305, superficie_km2: 24.7, visitado: false },
       ],
       detalle: null,
-      // Quitar visitados de aqui y ponerlo como un boolean en los pueblos
-      visitados: [],
     }
   }
 
   seleccionarPueblo = (nombre) => {
-    const nuevoArr = [...this.state.visitados];
+    const nuevoArr = [...this.state.pueblos];
 
-    if (!nuevoArr.includes(nombre)) {
-      nuevoArr.push(nombre);
-    }
+    nuevoArr.find((p) => p.nombre === nombre).visitado = true;
 
     this.setState({
+      pueblos: nuevoArr,
       detalle: nombre,
-      visitados: nuevoArr
     });
+  }
+
+  /**
+   * 
+   * @param {React.FormEvent<HTMLFormElement>} event 
+   */
+  agregarPueblo = (event) => {
+    event.preventDefault();
+
+    const nombre = event.target.nombre.value.trim();
+    const poblacion = event.target.poblacion.value.trim();
+    const superficie = event.target.superficie.value.trim();
+
+    if (!nombre || !poblacion || !superficie) {
+      return;
+    }
+
+    const poblacionInt = parseInt(poblacion);
+    const superficieInt = parseFloat(superficie);
+
+    if (poblacionInt < 0 || superficieInt < 0) {
+      return;
+    }
+
+    const nuevoObj = { nombre, poblacion: poblacionInt, superficie_km2: superficieInt, visitado: false };
+
+    this.setState((prev) => ({ pueblos: [...prev.pueblos, nuevoObj] }));
+
+    event.target.reset();
   }
 
   render() {
@@ -120,11 +149,11 @@ class App extends Component {
     return (
       <div className="App" >
         <h1>Lista de pueblos</h1>
-        <MostarPueblos pueblos={this.state.pueblos} seleccionado={this.state.detalle} handleClick={this.seleccionarPueblo} visitados={this.state.visitados} />
+        <MostarPueblos pueblos={this.state.pueblos} seleccionado={this.state.detalle} handleClick={this.seleccionarPueblo} />
         {this.state.detalle &&
           <DetallePueblo pueblo={pueblo} />
         }
-        <FormAgregarPueblo />
+        <FormAgregarPueblo callback={this.agregarPueblo} />
       </div >
     );
   }
