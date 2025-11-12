@@ -1,21 +1,22 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card, CardText, CardTitle, Col, FormGroup, Input, Label, Row, Navbar, NavbarBrand, NavLink } from 'reactstrap';
+import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Col, FormGroup, Input, Label, Row, Navbar, NavbarBrand, NavLink } from 'reactstrap';
 import './App.css';
 import { Component, useState } from 'react';
+import { PRODUCTS } from './data';
+
+// API
+// https://dummyjson.com/products
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menuItem: "UNO",
-      logged: false,
+      logged: true,
       info: "",
     }
   }
 
-  changeMenu(item) {
-    this.setState({ menuItem: item })
-  }
+
 
   userLogin(email, password) {
     if (password === '' || email === '') {
@@ -29,7 +30,7 @@ class App extends Component {
   }
 
   render() {
-    let obj = <Menu menuItem={this.state.menuItem} changeMenu={(item) => this.changeMenu(item)} />
+    let obj = <Menu changeMenu={(item) => this.changeMenu(item)} />
     if (!this.state.logged) {
       obj = <AppLogin userLogin={(email, password) => this.userLogin(email, password)} info={this.state.info} />
     }
@@ -91,39 +92,70 @@ function AppLogin(props) {
           <CardText className="text-danger">{props.info}</CardText>
         </Card>
       </Col>
-    </Row >
+    </Row>
   )
 }
 
 function Menu(props) {
-  let colorUno = 'secondary'
-  let colorDos = 'secondary'
-  let colorTres = 'secondary'
-  switch (props.menuItem) {
-    case 'UNO':
-      colorUno = 'primary'
-      break;
-    case 'DOS':
-      colorDos = 'primary'
-      break;
-    case 'TRES':
-      colorTres = 'primary'
-      break;
-    default:
-      break;
-  }
+  const [filter, setFilter] = useState("all");
+
+  const categories = [
+    { key: "all", label: "All" },
+    { key: "beauty", label: "Beauty" },
+    { key: "fragrances", label: "Fragrances" },
+    { key: "furniture", label: "Furniture" },
+    { key: "groceries", label: "Groceries" },
+  ];
+
+  const filteredProducts = filter === "all" ? PRODUCTS.products : PRODUCTS.products.filter(p => p.category === filter);
 
   return (
     <div>
       <Navbar>
         <NavbarBrand href="/">MYFPSCHOOL</NavbarBrand>
-        <NavLink>
-          <Button color={colorUno} onClick={() => props.changeMenu("UNO")}>UNO</Button>{" "}
-          <Button color={colorDos} onClick={() => props.changeMenu("DOS")}>DOS</Button>{" "}
-          <Button color={colorTres} onClick={() => props.changeMenu("TRES")}>TRES</Button>
+        <NavLink className='d-flex gap-2'>
+          {categories.map((c, i) => <Button key={i} color={c.key === filter ? "primary" : "secondary"} onClick={() => setFilter(c.key)}>{c.label}</Button>)}
         </NavLink>
       </Navbar>
+      <div className="container my-4">
+        <div className="row g-4">
+          {filteredProducts.map((p, i) => (
+            <div key={i} className="col-12 col-sm-6 col-md-4 d-flex">
+              <ProductCard product={p} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
+  );
+}
+
+export function ProductCard({ product }) {
+  return (
+    <Card className="flex-fill shadow-sm">
+      <img
+        alt={product.title}
+        src={product.thumbnail || product.images?.[0] || 'https://via.placeholder.com/300x200'}
+        className="card-img-top object-fit-cover"
+        style={{ height: '200px' }}
+      />
+      <CardBody className="d-flex flex-column justify-content-between">
+        <div>
+          <CardTitle tag="h5" className="fw-semibold text-truncate">
+            {product.title}
+          </CardTitle>
+          <CardSubtitle className="mb-2 text-muted" tag="h6">
+            {product.brand} — ${product.price.toFixed(2)}
+          </CardSubtitle>
+          <CardText className="small text-secondary">
+            {product.description.length > 100
+              ? product.description.slice(0, 100) + '...'
+              : product.description}
+          </CardText>
+        </div>
+        <Button color="primary" className="mt-3 align-self-start">Add to Cart</Button>
+      </CardBody>
+    </Card>
   );
 }
 
