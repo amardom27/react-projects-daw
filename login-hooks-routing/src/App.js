@@ -1,43 +1,41 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Component } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import './App.css';
 import { AppLogin } from './components/AppLogin';
-import { Menu } from './components/Menu';
 
 // API
 // https://dummyjson.com/products
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      logged: false,
-      info: "",
-    }
-  }
+function App() {
+  const [logged, setIsLogged] = useState(false);
+  const [info, setInfo] = useState("");
 
-  userLogin(email, password) {
+  const userLogin = (email, password) => {
     if (password === '' || email === '') {
-      this.setState({ info: "Cumplimente los campos." })
+      setInfo("Cumplimente los campos.");
     } else if (email === "myfpschool@mail.com" && password === "2023") {
-      this.setState({ logged: true, info: "" })
+      setIsLogged(true);
+      setInfo("");
     } else {
-      this.setState({ info: "Datos incorrectos." })
+      setInfo("Datos incorrectos.");
     }
   }
 
-  render() {
-    let obj = <Menu changeMenu={(item) => this.changeMenu(item)} />
-    if (!this.state.logged) {
-      obj = <AppLogin userLogin={(email, password) => this.userLogin(email, password)} info={this.state.info} />
-    }
-
-    return (
-      <div className="App">
-        {obj}
-      </div>
-    );
+  let navigate = useNavigate();
+  if (logged) {
+    navigate("/menu", {
+      state: {
+        logged
+      }
+    });
   }
+
+  return (
+    <div className="App">
+      <AppLogin userLogin={userLogin} info={info} />
+    </div>
+  );
 }
 
 export default App;

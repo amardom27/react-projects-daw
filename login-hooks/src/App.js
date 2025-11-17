@@ -27,7 +27,7 @@ class App extends Component {
   }
 
   render() {
-    let obj = <Menu changeMenu={(item) => this.changeMenu(item)} />
+    let obj = <Menu />
     if (!this.state.logged) {
       obj = <AppLogin userLogin={(email, password) => this.userLogin(email, password)} info={this.state.info} />
     }

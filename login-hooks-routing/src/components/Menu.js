@@ -9,6 +9,7 @@ export function Menu() {
   const [filter, setFilter] = useState("all");
   const [cartItems, setCartItems] = useState([]);
 
+
   const categories = [
     { key: "all", label: "All" },
     { key: "beauty", label: "Beauty" },
