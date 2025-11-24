@@ -1,0 +1,130 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useMemo, useState } from 'react';
+import { Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import './App.css';
+import { PROVINCIAS } from './constantes/provincia';
+
+function ModalBuscar({ isOpen, toggle, datos, title, onSelect }) {
+  const [selected, setSelected] = useState("");
+  const [query, setQuery] = useState("");
+
+  const datosFiltrados = useMemo(() => {
+    return datos.filter(d => d.toLowerCase().includes(query.toLowerCase()));
+  }, [datos, query])
+
+  const handleSelection = () => {
+    if (selected) {
+      onSelect(selected);
+      setSelected("");
+      setQuery("");
+      toggle();
+    }
+  };
+
+  return (
+    <Modal isOpen={isOpen} toggle={toggle}>
+      <ModalHeader toggle={toggle}>{title}</ModalHeader>
+      <ModalBody>
+        <FormGroup>
+          <Label for="buscador">Buscar</Label>
+          <Input
+            id="buscador"
+            placeholder={`Teclee para buscar ${title.toLowerCase()}`}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </FormGroup>
+        <div className='d-flex flex-wrap gap-2'>
+          {datosFiltrados.map((item, i) => (
+            <Button
+              key={i}
+              color={item === selected ? 'primary' : 'secondary'}
+              onClick={() => setSelected(item)}
+            >
+              {item}
+            </Button>
+          ))}
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button color="primary" onClick={handleSelection} disabled={!selected}>
+          Seleccionar
+        </Button>{' '}
+        <Button color="secondary" onClick={toggle}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+}
+
+function App() {
+  const [provincia, setProvincia] = useState("");
+  const [localidad, setLocalidad] = useState("");
+  const [modalState, setModalState] = useState({ tipo: null, abierto: false });
+
+  const provinciasArr = PROVINCIAS["Andalucía"].provincias.map(p => p.nombre);
+  const localidadesArr = provincia === "" ? [] : PROVINCIAS["Andalucía"].provincias.find(p => p.nombre === provincia).municipios;
+
+  const openModal = (tipo) => setModalState({ tipo, abierto: true });
+  const closeModal = () => setModalState({ tipo: null, abierto: false });
+
+  return (
+    <div className="App p-3">
+      <div className='d-flex align-items-end gap-3 mb-3'>
+        <div>
+          <Label
+            for="provincia"
+          >
+            Provincia
+          </Label>
+          <Input
+            style={{ maxWidth: "400px" }}
+            id="provincia"
+            name="provincia"
+            placeholder="Provincia"
+            type="text"
+            value={provincia}
+            disabled
+          />
+        </div>
+        <Button style={{ height: "auto" }} color='primary' onClick={() => openModal("provincia")}>
+          Buscar
+        </Button>
+      </div>
+
+      <div className='d-flex align-items-end gap-3'>
+        <div>
+          <Label
+            for="localidad"
+          >
+            Localidad
+          </Label>
+          <Input
+            style={{ maxWidth: "400px" }}
+            id="localidad"
+            name="localidad"
+            placeholder="Localidad"
+            type="text"
+            value={localidad}
+            disabled
+          />
+        </div>
+        <Button style={{ height: "auto" }} color={provincia === "" ? 'secondary' : 'primary'} disabled={provincia === "" ? true : false} onClick={() => openModal("localidad")}>
+          Buscar
+        </Button>
+      </div>
+
+      <ModalBuscar
+        isOpen={modalState.abierto}
+        toggle={closeModal}
+        title={modalState.tipo === "provincia" ? "Provincia" : "Localidad"}
+        datos={modalState.tipo === "provincia" ? provinciasArr : localidadesArr}
+        onSelect={modalState.tipo === "provincia" ? setProvincia : setLocalidad}
+      />
+    </div>
+  );
+}
+
+export default App;
