@@ -39,7 +39,7 @@ function ModalBuscar({ isOpen, toggle, datos, title, onSelect }) {
           {datosFiltrados.map((item, i) => (
             <Button
               key={i}
-              color={item === selected ? 'primary' : 'secondary'}
+              color={item === selected ? 'primary' : 'selected'}
               onClick={() => setSelected(item)}
             >
               {item}
@@ -59,19 +59,9 @@ function ModalBuscar({ isOpen, toggle, datos, title, onSelect }) {
   );
 }
 
-function App() {
-  const [provincia, setProvincia] = useState("");
-  const [localidad, setLocalidad] = useState("");
-  const [modalState, setModalState] = useState({ tipo: null, abierto: false });
-
-  const provinciasArr = PROVINCIAS["Andalucía"].provincias.map(p => p.nombre);
-  const localidadesArr = provincia === "" ? [] : PROVINCIAS["Andalucía"].provincias.find(p => p.nombre === provincia).municipios;
-
-  const openModal = (tipo) => setModalState({ tipo, abierto: true });
-  const closeModal = () => setModalState({ tipo: null, abierto: false });
-
+function Formluario({ provincia, localidad, openModal }) {
   return (
-    <div className="App p-3">
+    <>
       <div className='d-flex align-items-end gap-3 mb-3'>
         <div>
           <Label
@@ -115,15 +105,39 @@ function App() {
           Buscar
         </Button>
       </div>
+    </>
+  )
+}
+
+function App() {
+  const [provincia, setProvincia] = useState("");
+  const [localidad, setLocalidad] = useState("");
+  const [modalState, setModalState] = useState({ tipo: null, abierto: false });
+
+  const provinciasArr = PROVINCIAS["Andalucía"].provincias.map(p => p.nombre);
+  const localidadesArr = useMemo(() => provincia === "" ? [] : PROVINCIAS["Andalucía"].provincias.find(p => p.nombre === provincia).municipios, [provincia]);
+
+  const openModal = (tipo) => setModalState({ tipo, abierto: true });
+  const closeModal = () => setModalState({ tipo: null, abierto: false });
+
+  const handleProvinciaSelection = (nombreProv) => {
+    setProvincia(nombreProv);
+    setLocalidad("");
+  }
+
+  return (
+    <div className="App p-3">
+      <Formluario provincia={provincia} localidad={localidad} openModal={openModal} />
 
       <ModalBuscar
         isOpen={modalState.abierto}
         toggle={closeModal}
         title={modalState.tipo === "provincia" ? "Provincia" : "Localidad"}
         datos={modalState.tipo === "provincia" ? provinciasArr : localidadesArr}
-        onSelect={modalState.tipo === "provincia" ? setProvincia : setLocalidad}
+        onSelect={modalState.tipo === "provincia" ? handleProvinciaSelection : setLocalidad}
+        provincia={provincia}
       />
-    </div>
+    </div >
   );
 }
 
