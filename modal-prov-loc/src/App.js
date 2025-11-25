@@ -137,7 +137,7 @@ function App() {
         onSelect={modalState.tipo === "provincia" ? handleProvinciaSelection : setLocalidad}
         provincia={provincia}
       />
-    </div >
+    </div>
   );
 }
 
