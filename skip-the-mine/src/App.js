@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import './App.css';
 import { Button } from 'reactstrap';
-import { crearTablero } from './utils/utils';
+import { crearTablero, obtenerColor, obtenerDistanciaMinima } from './utils/utils';
 import { NUM } from './utils/utils';
 
 // TODO poner minas y comprobar si están bien puestas
@@ -48,15 +48,18 @@ function App() {
         {matriz.map((row, i) =>
           <div key={i} className='d-flex gap-1'>
             {row.map((celda, i) => {
+              const distMinima = obtenerDistanciaMinima(matriz, position.row, position.col);
+
+              let color = "secondary";
               let text = "_";
               if (celda.row === position.row && celda.col === position.col) {
-                text = "P";
+                text = distMinima;
+                color = obtenerColor(distMinima);
               } else if (celda.isMine) {
                 text = "M";
               }
-
               return (
-                <Button key={i} style={{ width: '2.6rem' }}>{text}</Button>
+                <Button key={i} color={color} style={{ width: '2.6rem' }}>{text}</Button>
               )
             })}
           </div>

@@ -106,3 +106,44 @@ function comprobarCamino(matriz, currI, currJ, visitadas) {
   }
   return false;
 }
+
+function calcularDistancia(currI, currJ, mineI, mineJ) {
+  const dx = mineJ - currJ;
+  const dy = mineI - currI;
+
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+export function obtenerDistanciaMinima(matriz, currI, currJ) {
+  let minDist = matriz.length;
+  for (let r = 0; r < matriz.length; r++) {
+    for (let c = 0; c < matriz.length; c++) {
+      if (matriz[r][c].isMine) {
+        const dis = parseInt(calcularDistancia(currI, currJ, r, c));
+        if (dis < minDist) {
+          minDist = dis;
+        }
+      }
+    }
+  }
+  return minDist;
+}
+
+export function obtenerColor(num) {
+  switch (true) {
+    case num >= 4:
+      return "primary";
+
+    case num === 3:
+      return "info";
+
+    case num === 2:
+      return "warning";
+
+    case num === 1:
+      return "danger";
+
+    default:
+      return "secondary";
+  }
+}
