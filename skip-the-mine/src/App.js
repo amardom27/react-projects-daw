@@ -1,9 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react';
-import './App.css';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
+import './App.css';
+import { END_POS, MATRIX_DIMENSIONS, MAX_MINES, MIN_MINES, START_POS } from './utils/ctes';
 import { crearTablero, obtenerColor, obtenerDistanciaMinima } from './utils/utils';
-import { MATRIX_DIMENSIONS, END_POS, START_POS } from './utils/ctes';
 
 function App() {
   const [minas, setMinas] = useState(10);
@@ -11,7 +11,9 @@ function App() {
   const [position, setPosition] = useState({ row: 0, col: 0 });
   const [gameState, setGameState] = useState({ playing: false, gameOver: false });
 
-  const movePosition = (direction) => {
+  // Actualizar la posicion 
+  // Necesitamos el callback para poder poner la funciona en las dependencias del useEffect 
+  const movePosition = useCallback((direction) => {
     let nuevaPos = { ...position };
 
     switch (direction) {
@@ -37,18 +39,20 @@ function App() {
       setGameState({ playing: false, gameOver: true });
     }
     setPosition(nuevaPos);
-  }
+  }, [matriz, position]);
 
-  const startGame = () => {
+  // Empezar el juego, resetear los estados
+  // Necesitamos el callback para poder poner la funciona en las dependencias del useEffect 
+  const startGame = useCallback(() => {
     setMatriz(crearTablero(MATRIX_DIMENSIONS, MATRIX_DIMENSIONS, minas));
     setPosition({ row: START_POS.row, col: START_POS.col });
     setGameState({ playing: true, gameOver: false });
-  }
+  }, [minas]);
 
   let mensaje = {};
   if (gameState.gameOver) {
     if (position.row === END_POS.row && position.col === END_POS.col) {
-      mensaje.text = "Has ganado!! :D - Pulse jugar para reiniciar";
+      mensaje.text = "Has ganado!! :D";
       mensaje.color = "success";
     } else {
       mensaje.text = "Has perdido!! :(";
@@ -64,6 +68,73 @@ function App() {
     }
   }
 
+  // Aumentar / Disminuir las minas
+  // Necesitamos el callback para poder poner la funciona en las dependencias del useEffect 
+  const changeMines = useCallback((action) => {
+    if (action === 'down') {
+      setMinas(Math.max(MIN_MINES, minas - 1));
+    } else if (action === "up") {
+      setMinas(Math.min(MAX_MINES, minas + 1))
+    }
+  }, [minas]);
+
+  // Manejar el juego con teclado 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 's') {
+        startGame();
+        return;
+      } else if (e.key === 'n') {
+        changeMines("down");
+        return;
+      } else if (e.key === 'p') {
+        changeMines("up");
+        return;
+      }
+
+      if (!gameState.playing) {
+        return;
+      }
+
+      switch (e.key) {
+        case 'h': // izquierda
+          movePosition('left');
+          break;
+        case 'j': // abajo
+          movePosition('down');
+          break;
+        case 'k': // arriba
+          movePosition('up');
+          break;
+        case 'l': // derecha
+          movePosition('right');
+          break;
+
+        // Arrow keys
+        case 'ArrowLeft':
+          movePosition('left');
+          break;
+        case 'ArrowRight':
+          movePosition('right');
+          break;
+        case 'ArrowUp':
+          movePosition('up');
+          break;
+        case 'ArrowDown':
+          movePosition('down');
+          break;
+        default:
+          break;
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [changeMines, gameState.playing, movePosition, position, startGame]);
+
   return (
     <div className="App d-flex flex-column align-items-center gap-3">
       <h1 className='w-100 text-center pt-4 text-center pb-4 bg-info'>Skip the mine</h1>
@@ -71,7 +142,7 @@ function App() {
       <div className='text-center'>
         <Button className='ps-3 pe-3' onClick={() => setMinas(Math.max(1, minas - 1))}>-{' '}</Button>
         {' '}
-        <Button className='ps-3 pe-3' onClick={() => setMinas(Math.min(20, minas + 1))}>+</Button>
+        <Button className='ps-3 pe-3' onClick={() => setMinas(Math.min(40, minas + 1))}>+</Button>
       </div>
       <div className='text-center'>
         <Button className='bg-success' onClick={startGame}>Jugar</Button>

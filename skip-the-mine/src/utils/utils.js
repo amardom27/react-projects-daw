@@ -1,5 +1,6 @@
-import { START_POS, END_POS, DIRECTIONS } from "./ctes";
+import { DIRECTIONS, END_POS, START_POS } from "./ctes";
 
+// Obtener un numero random entre dos valores incluyendo ambos [min, max]
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -7,6 +8,7 @@ function getRandomIntInclusive(min, max) {
 }
 
 export function crearTablero(rows, cols, numMinas) {
+  // Creamos inicialmente la matriz vacia
   const nuevaMatriz = [];
   for (let r = 0; r < rows; r++) {
     const rowArr = [];
@@ -20,15 +22,20 @@ export function crearTablero(rows, cols, numMinas) {
     nuevaMatriz.push(rowArr);
   }
 
-  const limite = 100;
+  // Variables de seguridad para el while (true)
+  const limite = 1000;
   let lim = 0;
 
+  // Recorremos la matriz de forma recursiva para comprobar que haya un camino posible desde
+  // la posicion inicial hasta la poscion final
   while (true && lim < limite) {
     for (let i = 0; i < numMinas; i++) {
       const posMinaI = getRandomIntInclusive(0, rows - 1);
       const posMinaJ = getRandomIntInclusive(0, cols - 1);
 
-      if (nuevaMatriz[posMinaI][posMinaJ].isMine) {
+      if (nuevaMatriz[posMinaI][posMinaJ].isMine ||
+        posMinaI === START_POS.row || posMinaJ === START_POS.col ||
+        posMinaI === END_POS.row || posMinaJ === END_POS.col) {
         i--;
         continue;
       }
@@ -50,6 +57,7 @@ export function crearTablero(rows, cols, numMinas) {
   return nuevaMatriz;
 }
 
+// Comprueba si hay un camino desde la posicion que mandamos por parametros (currI, currJ) hasta la posicion final
 function comprobarCamino(matriz, currI, currJ, visitadas) {
   if (currI < 0 || currI >= matriz.length || currJ < 0 || currJ >= matriz[0].length) {
     return false;
@@ -82,6 +90,7 @@ function comprobarCamino(matriz, currI, currJ, visitadas) {
   return false;
 }
 
+// Calcular la distancia entre dos puntos
 function calcularDistancia(currI, currJ, mineI, mineJ) {
   const dx = mineJ - currJ;
   const dy = mineI - currI;
@@ -89,6 +98,8 @@ function calcularDistancia(currI, currJ, mineI, mineJ) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+// Obtener la distancia minima entre el punto que mandamos por parametros (currI, currJ)
+// hasta la mina mas proxima
 export function obtenerDistanciaMinima(matriz, currI, currJ) {
   let minDist = matriz.length;
   for (let r = 0; r < matriz.length; r++) {
@@ -104,6 +115,8 @@ export function obtenerDistanciaMinima(matriz, currI, currJ) {
   return minDist;
 }
 
+// Obtener un color dependiendo del numero que mandamos
+// Se utiliza dependiendo de la distancia minima
 export function obtenerColor(num) {
   switch (true) {
     case num >= 4:
