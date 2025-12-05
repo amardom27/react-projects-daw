@@ -52,8 +52,6 @@ export function crearTablero(rows, cols, numMinas) {
     for (let i = 0; i < numMinas; i++) {
       const posMinaI = getRandomIntInclusive(0, rows - 1);
       const posMinaJ = getRandomIntInclusive(0, cols - 1);
-      console.log(posMinaI);
-
 
       if (nuevaMatriz[posMinaI][posMinaJ].isMine) {
         i--;
@@ -61,8 +59,6 @@ export function crearTablero(rows, cols, numMinas) {
       }
       nuevaMatriz[posMinaI][posMinaJ].isMine = true;
     }
-    console.log("Nueva");
-    console.log(nuevaMatriz);
 
     const visitadas = Array.from({ length: rows }, () => Array(cols).fill(false));
     if (comprobarCamino(nuevaMatriz, START_POS.row, START_POS.col, visitadas)) {
@@ -75,9 +71,6 @@ export function crearTablero(rows, cols, numMinas) {
       }
     }
     lim++;
-
-    console.log("Reset");
-    console.log(nuevaMatriz);
   }
   return nuevaMatriz;
 }

@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import './App.css';
 import { Button } from 'reactstrap';
-import { crearMatriz, crearTablero } from './utils/utils';
+import { crearTablero } from './utils/utils';
 import { NUM } from './utils/utils';
 
 // TODO poner minas y comprobar si están bien puestas
