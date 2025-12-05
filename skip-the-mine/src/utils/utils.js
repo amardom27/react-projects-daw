@@ -1,29 +1,4 @@
-// export function crearMatriz(rows, cols) {
-//   const nuevaMatriz = [];
-//   for (let r = 0; r < rows; r++) {
-//     const rowArr = [];
-//     for (let c = 0; c < cols; c++) {
-//       rowArr.push({
-//         row: r,
-//         col: c,
-//         isMine: false
-//       });
-//     }
-//     nuevaMatriz.push(rowArr);
-//   }
-//   return nuevaMatriz;
-// }
-
-export const NUM = 10;
-const START_POS = { row: 0, col: 0 };
-const END_POS = { row: NUM - 1, col: NUM - 1 };
-
-const dir = [
-  [-1, 0], // arriba
-  [0, 1],  // derecha
-  [1, 0],  // abajo
-  [0, -1]  // izquierda
-];
+import { START_POS, END_POS, DIRECTIONS } from "./ctes";
 
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
@@ -94,8 +69,8 @@ function comprobarCamino(matriz, currI, currJ, visitadas) {
 
   visitadas[currI][currJ] = true;
 
-  for (let k = 0; k < dir.length; k++) {
-    const [dirI, dirJ] = dir[k];
+  for (let k = 0; k < DIRECTIONS.length; k++) {
+    const [dirI, dirJ] = DIRECTIONS[k];
 
     const nuevaI = currI + dirI;
     const nuevaJ = currJ + dirJ;
