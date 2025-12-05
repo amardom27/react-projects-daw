@@ -2,10 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import './App.css';
 import { Button } from 'reactstrap';
-import { crearMatriz } from './utils/utils';
-
-const NUM = 10;
-const END_POS = { row: NUM - 1, col: NUM - 1 };
+import { crearMatriz, crearTablero } from './utils/utils';
+import { NUM } from './utils/utils';
 
 // TODO poner minas y comprobar si están bien puestas
 // TODO calcular la distancia a la mina mas próxima
@@ -13,8 +11,9 @@ const END_POS = { row: NUM - 1, col: NUM - 1 };
 
 function App() {
   const [minas, setMinas] = useState(10);
-  const [matriz, setMatriz] = useState(crearMatriz(NUM, NUM));
+  const [matriz, setMatriz] = useState(crearTablero(NUM, NUM, 10));
   const [position, setPosition] = useState({ row: 0, col: 0 });
+  console.log(matriz);
 
   const movePosition = (direction) => {
     setPosition((prev) => {
@@ -52,7 +51,10 @@ function App() {
               let text = "_";
               if (celda.row === position.row && celda.col === position.col) {
                 text = "P";
+              } else if (celda.isMine) {
+                text = "M";
               }
+
               return (
                 <Button key={i} style={{ width: '2.6rem' }}>{text}</Button>
               )
