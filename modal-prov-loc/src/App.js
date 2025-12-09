@@ -14,12 +14,18 @@ function ModalBuscar({ isOpen, toggle, datos, title, onSelect }) {
 
   const handleSelection = () => {
     if (selected) {
-      onSelect(selected);
-      setSelected("");
-      setQuery("");
-      toggle();
+      const value = selected;
+
+      toggle(); // cerrar modal primero
+
+      // Esperar a que termine la animación antes de cambiar la UI
+      setTimeout(() => {
+        onSelect(value);
+        setSelected("");
+        setQuery("");
+      }, 200); // 200ms
     }
-  };
+  }
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -39,7 +45,7 @@ function ModalBuscar({ isOpen, toggle, datos, title, onSelect }) {
           {datosFiltrados.map((item, i) => (
             <Button
               key={i}
-              color={item === selected ? 'primary' : 'selected'}
+              color={item === selected ? 'primary' : 'secondary'}
               onClick={() => setSelected(item)}
             >
               {item}
@@ -56,10 +62,10 @@ function ModalBuscar({ isOpen, toggle, datos, title, onSelect }) {
         </Button>
       </ModalFooter>
     </Modal>
-  );
+  )
 }
 
-function Formluario({ provincia, localidad, openModal }) {
+function Formluario({ provincia, localidad, openModal, onReset }) {
   return (
     <>
       <div className='d-flex align-items-end gap-3 mb-3'>
@@ -105,6 +111,9 @@ function Formluario({ provincia, localidad, openModal }) {
           Buscar
         </Button>
       </div>
+      <Button className='mt-4' style={{ height: "auto" }} color="danger" onClick={() => onReset()}>
+        Reset
+      </Button>
     </>
   )
 }
@@ -125,9 +134,14 @@ function App() {
     setLocalidad("");
   }
 
+  const resetAll = () => {
+    setProvincia("");
+    setLocalidad("");
+  }
+
   return (
     <div className="App p-3">
-      <Formluario provincia={provincia} localidad={localidad} openModal={openModal} />
+      <Formluario provincia={provincia} localidad={localidad} openModal={openModal} onReset={resetAll} />
 
       <ModalBuscar
         isOpen={modalState.abierto}
