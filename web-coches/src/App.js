@@ -36,10 +36,10 @@ const VehiculoCard = ({ vehiculo }) => {
   );
 };
 
-const CatalogoVehiculos = () => (
+const CatalogoVehiculos = ({ coches }) => (
   <Container className="my-5">
     <Row className="g-4">
-      {COCHES.map((vehiculo, index) => (
+      {coches.map((vehiculo, index) => (
         <Col md="4" key={index}>
           <VehiculoCard vehiculo={vehiculo} />
         </Col>
@@ -51,7 +51,8 @@ const CatalogoVehiculos = () => (
 const FiltroVehiculos = ({
   filtros,
   onChange,
-  onAplicarFiltros
+  onAplicarFiltros,
+  onReset
 }) => {
   return (
     <Card className="mt-5">
@@ -109,7 +110,10 @@ const FiltroVehiculos = ({
             </Col>
           </Row>
 
-          <div className="mt-4 text-end">
+          <div className="d-flex justify-content-end gap-3 mt-4">
+            <Button color="secondary" type="button" onClick={onReset}>
+              Limpiar filtros
+            </Button>
             <Button color="primary" type="button" onClick={onAplicarFiltros}>
               Aplicar filtros
             </Button>
@@ -121,12 +125,13 @@ const FiltroVehiculos = ({
 };
 
 function App() {
+  const [cochesFiltrados, setCochesFiltrados] = useState(COCHES);
   const [filtros, setFiltros] = useState({
     modelo: "",
     marca: "",
     combustible: "",
     precioMax: ""
-  });
+  })
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -134,17 +139,37 @@ function App() {
       ...filtros,
       [name]: value
     });
-  };
+  }
 
   const handleFiltros = () => {
-    console.log("Aplicar filtros");
+    const precioMax = filtros.precioMax
+      ? Number(filtros.precioMax)
+      : Infinity;
+
+    const filtrados = COCHES.filter(c =>
+      (filtros.modelo === "" || c.modelo.toLowerCase().includes(filtros.modelo.toLowerCase())) &&
+      (filtros.marca === "" || c.marca.toLocaleLowerCase().includes(filtros.marca.toLocaleLowerCase())) &&
+      (filtros.combustible === "" || c.combustible === filtros.combustible) &&
+      (filtros.precioMax === "" || c.precio_euros <= Number(precioMax))
+    );
+    setCochesFiltrados(filtrados);
+  }
+
+  const resetFiltros = () => {
+    setFiltros({
+      modelo: "",
+      marca: "",
+      combustible: "",
+      precioMax: ""
+    });
+    setCochesFiltrados(COCHES);
   }
 
   return (
     <div className="App container my-5" >
       <h1 className='text-center'>Catálogo de Vehículos</h1>
-      <CatalogoVehiculos />
-      <FiltroVehiculos filtros={filtros} onChange={handleChange} onAplicarFiltros={handleFiltros} />
+      <CatalogoVehiculos coches={cochesFiltrados} />
+      <FiltroVehiculos filtros={filtros} onChange={handleChange} onAplicarFiltros={handleFiltros} onReset={resetFiltros} />
     </div >
   );
 }
