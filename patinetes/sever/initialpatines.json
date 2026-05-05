@@ -1,0 +1,7 @@
+[
+ { "numeroSerie": "PAT-1001", "potencia": 350, "marca": "Xiaomi", "modelo": "Mi Scooter 3", "color": "Negro", "precio": 499 },
+ { "numeroSerie": "PAT-1002", "potencia": 500, "marca": "Segway", "modelo": "Ninebot Max G2", "color": "Gris", "precio": 899 },
+ { "numeroSerie": "PAT-1003", "potencia": 800, "marca": "SmartGyro", "modelo": "Rockway Pro", "color": "Rojo", "precio": 749 },
+ { "numeroSerie": "PAT-1004", "potencia": 600, "marca": "Cecotec", "modelo": "Bongo A+", "color": "Azul", "precio": 579 },
+ { "numeroSerie": "PAT-1005", "potencia": 450, "marca": "Hiboy", "modelo": "S2 Pro", "color": "Blanco", "precio": 529 }
+]
