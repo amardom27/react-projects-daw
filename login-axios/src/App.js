@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { Form, FormGroup, Label, Input } from 'reactstrap';
+import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useState } from 'react';
 
 function App() {
@@ -9,10 +9,16 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    console.log("submit")
+  };
+
   return (
     <div className='container mt-5 my-0'>
       <h1 className='mb-4'>Ejemplo Login</h1>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label for="exampleEmail">
             Email
@@ -35,6 +41,9 @@ function App() {
             type="password"
           />
         </FormGroup>
+        <Button>
+          Submit
+        </Button>
       </Form>
     </div>
   );
