@@ -1,7 +1,7 @@
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useEffect, useState } from 'react'
-import { Breadcrumb, BreadcrumbItem, Button, ButtonGroup, Card, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, } from 'reactstrap'
+import { Breadcrumb, BreadcrumbItem, Button, ButtonGroup, Card, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap'
 import './App.css'
 
 const BASE_URL = 'http://localhost:4000'
@@ -12,6 +12,7 @@ function App() {
   const [enlaces, setEnlaces] = useState([])
   const [modalAlta, setModalAlta] = useState(false)
   const [modalDesactivar, setModalDesactivar] = useState(false)
+  const [modalCanvas, setModalCanvas] = useState(false)
   const [nuevoEnlace, setNuevoEnlace] = useState({
     nombre: '',
     url: '',
@@ -48,9 +49,13 @@ function App() {
     setModalDesactivar(!modalDesactivar)
   }
 
+  const toggleCanvas = () => {
+    setModalCanvas(!modalCanvas)
+  }
+
   // FORM ALTA
-  const handleInputChange = ({ target }) => {
-    const { name, value } = target
+  const handleInputChange = (event) => {
+    const { name, value } = event.target
 
     setNuevoEnlace(prev => ({
       ...prev,
@@ -58,7 +63,7 @@ function App() {
     }))
   }
 
-  const guardarEnlace = () => {
+  const handleStoreSubmit = () => {
 
     const nuevoId =
       enlaces.length > 0
@@ -86,7 +91,7 @@ function App() {
   }
 
   // DESACTIVAR
-  const desactivarEnlace = () => {
+  const handleDesactivarSubmit = () => {
 
     const nuevosEnlaces = enlaces.filter(enlace => enlace.id !== Number(idDesactivar))
 
@@ -143,6 +148,49 @@ function App() {
 
       </Card>
 
+      <div className='mt-4'>
+        <Button
+          color="primary"
+          onClick={toggleCanvas}
+        >
+          Open
+        </Button>
+
+        <Offcanvas isOpen={modalCanvas} toggle={toggleCanvas}>
+          <OffcanvasHeader toggle={toggleCanvas}>
+            Offcanvas
+          </OffcanvasHeader>
+
+          <OffcanvasBody>
+            <FormGroup>
+              <Label for="usuario">
+                Usuario
+              </Label>
+              <Input
+                id="usuario"
+                name="usuario"
+                placeholder="Ej: pepe12"
+                type="text"
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label for="clave">
+                Contraseña
+              </Label>
+              <Input
+                id="clave"
+                name="clave"
+                placeholder="****"
+                type="password"
+              />
+            </FormGroup>
+
+            <Button color='primary' className='w-100 mt-2'>Login</Button>
+          </OffcanvasBody>
+        </Offcanvas>
+      </div>
+
       {/* MODAL ALTA */}
       <Modal isOpen={modalAlta} toggle={toggleAlta}>
 
@@ -188,7 +236,7 @@ function App() {
           </Button>
           <Button
             color="primary"
-            onClick={guardarEnlace}
+            onClick={handleStoreSubmit}
           >
             Guardar
           </Button>
@@ -236,7 +284,7 @@ function App() {
           </Button>
           <Button
             color="danger"
-            onClick={desactivarEnlace}
+            onClick={handleDesactivarSubmit}
           >
             Desactivar
           </Button>
