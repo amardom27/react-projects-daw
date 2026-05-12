@@ -126,21 +126,15 @@ class LoginCanvas extends Component {
 class App extends Component {
 	state = {
 		enlaces: [],
-
 		modals: {
 			alta: false,
 			desactivar: false,
 			canvas: false,
 		},
-
 		nuevoEnlace: INITIAL_ENLACE,
-
 		idDesactivar: "",
-
 		login: INITIAL_LOGIN,
-
 		title: null,
-
 		error: null,
 	}
 
@@ -207,9 +201,7 @@ class App extends Component {
 			enlaces: [...prev.enlaces, enlace],
 
 			nuevoEnlace: INITIAL_ENLACE,
-
 			idDesactivar: enlace.id,
-
 			modals: {
 				...prev.modals,
 				alta: false,
@@ -228,7 +220,6 @@ class App extends Component {
 			enlaces: nuevosEnlaces,
 
 			idDesactivar: nuevosEnlaces[0]?.id || "",
-
 			modals: {
 				...prev.modals,
 				desactivar: false,
@@ -261,21 +252,17 @@ class App extends Component {
 
 		this.setState({
 			login: INITIAL_LOGIN,
-
 			title: null,
-
 			error: null,
 		})
 	}
 
 	// RENDER
-
 	render() {
 		const { enlaces, modals, nuevoEnlace, idDesactivar, login, title, error } =
 			this.state
 
 		const isLogged = Boolean(title)
-
 		const hasEnlaces = enlaces.length > 0
 
 		return (
@@ -328,7 +315,6 @@ class App extends Component {
 				</div>
 
 				{/* MODAL ALTA */}
-
 				<Modal isOpen={modals.alta} toggle={() => this.toggleModal("alta")}>
 					<ModalHeader toggle={() => this.toggleModal("alta")}>
 						Nuevo Breadcrumb
@@ -368,7 +354,6 @@ class App extends Component {
 				</Modal>
 
 				{/* MODAL DESACTIVAR */}
-
 				<Modal
 					isOpen={modals.desactivar}
 					toggle={() => this.toggleModal("desactivar")}
