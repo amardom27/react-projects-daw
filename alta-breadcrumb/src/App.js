@@ -69,11 +69,7 @@ const LoginCanvas = ({
 
 		<OffcanvasBody>
 			{isLogged ? (
-				<Button
-					color='danger'
-					className='rounded w-100'
-					onClick={onLogout}
-				>
+				<Button color='danger' className='rounded w-100' onClick={onLogout}>
 					Log Out
 				</Button>
 			) : (
@@ -100,11 +96,7 @@ const LoginCanvas = ({
 
 					{error && <span className='text-danger'>{error}</span>}
 
-					<Button
-						color='primary'
-						className='rounded'
-						onClick={onLogin}
-					>
+					<Button color='primary' className='rounded' onClick={onLogin}>
 						Login
 					</Button>
 				</Card>
@@ -204,10 +196,7 @@ function App() {
 
 	const handleLoginSubmit = async () => {
 		try {
-			const res = await axios.post(
-				`${BASE_URL}/nuevos-usuarios.php`,
-				login,
-			)
+			const res = await axios.post(`${BASE_URL}/nuevos-usuarios.php`, login)
 
 			setTitle(res.data.offcavas)
 			setEnlaces(res.data.enlaces)
@@ -305,10 +294,7 @@ function App() {
 				</ModalBody>
 
 				<ModalFooter>
-					<Button
-						color='secondary'
-						onClick={() => toggleModal("alta")}
-					>
+					<Button color='secondary' onClick={() => toggleModal("alta")}>
 						Cancelar
 					</Button>
 
@@ -336,9 +322,7 @@ function App() {
 							id='desactivar'
 							type='select'
 							value={idDesactivar}
-							onChange={(event) =>
-								setIdDesactivar(event.target.value)
-							}
+							onChange={(event) => setIdDesactivar(event.target.value)}
 						>
 							{enlaces.map(({ id, nombre }) => (
 								<option key={id} value={id}>
@@ -350,10 +334,7 @@ function App() {
 				</ModalBody>
 
 				<ModalFooter>
-					<Button
-						color='secondary'
-						onClick={() => toggleModal("desactivar")}
-					>
+					<Button color='secondary' onClick={() => toggleModal("desactivar")}>
 						Cancelar
 					</Button>
 
