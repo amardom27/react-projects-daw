@@ -18,6 +18,12 @@ function App() {
     url: '',
   })
   const [idDesactivar, setIdDesactivar] = useState('')
+  const [login, setLogin] = useState({
+    usuario: '',
+    password: '',
+  })
+  const [title, setTitle] = useState(null)
+  const [error, setError] = useState(null)
 
   // LOAD DATA
   const fetchEnlaces = async () => {
@@ -107,6 +113,30 @@ function App() {
     toggleDesactivar()
   }
 
+  const handleLoginSubmit = async () => {
+    try {
+
+      const res = await axios.post(`${BASE_URL}/nuevos-usuarios.php`, login)
+
+      setTitle(res.data.offcavas)
+      setEnlaces(res.data.enlaces)
+      setError(null)
+
+    } catch (error) {
+      setError(error.response.data.error)
+    }
+  }
+
+  const handleLogOut = () => {
+    fetchEnlaces()
+    setLogin({
+      usuario: '',
+      password: '',
+    })
+    setTitle(null)
+    setError(null)
+  }
+
   // JSX
   return (
     <div className="App p-5">
@@ -157,37 +187,60 @@ function App() {
         </Button>
 
         <Offcanvas isOpen={modalCanvas} toggle={toggleCanvas}>
-          <OffcanvasHeader toggle={toggleCanvas}>
-            Offcanvas
-          </OffcanvasHeader>
+          {title ? (
+            <>
+              <OffcanvasHeader toggle={toggleCanvas}>
+                {title}
+              </OffcanvasHeader>
+              <OffcanvasBody>
+                <Button color='danger' className='w-100 mt-2' onClick={handleLogOut}>Log Out</Button>
+              </OffcanvasBody>
+            </>
+          ) : (
+            <>
+              <OffcanvasHeader toggle={toggleCanvas}>
+                Offcanvas
+              </OffcanvasHeader>
 
-          <OffcanvasBody>
-            <FormGroup>
-              <Label for="usuario">
-                Usuario
-              </Label>
-              <Input
-                id="usuario"
-                name="usuario"
-                placeholder="Ej: pepe12"
-                type="text"
-              />
-            </FormGroup>
+              <OffcanvasBody>
+                <FormGroup>
+                  <Label for="usuario">
+                    Usuario
+                  </Label>
+                  <Input
+                    id="usuario"
+                    name="usuario"
+                    placeholder="Ej: pepe12"
+                    type="text"
+                    onChange={(event) => setLogin(prev => ({
+                      ...prev,
+                      usuario: event.target.value,
+                    }))}
+                  />
+                </FormGroup>
 
-            <FormGroup>
-              <Label for="clave">
-                Contraseña
-              </Label>
-              <Input
-                id="clave"
-                name="clave"
-                placeholder="****"
-                type="password"
-              />
-            </FormGroup>
+                <FormGroup>
+                  <Label for="password">
+                    Contraseña
+                  </Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    placeholder="****"
+                    type="password"
+                    onChange={(event) => setLogin(prev => ({
+                      ...prev,
+                      password: event.target.value,
+                    }))}
+                  />
+                </FormGroup>
 
-            <Button color='primary' className='w-100 mt-2'>Login</Button>
-          </OffcanvasBody>
+                {error && <span className='text-danger'>{error}</span>}
+
+                <Button color='primary' className='w-100 mt-2' onClick={handleLoginSubmit}>Login</Button>
+              </OffcanvasBody>
+            </>
+          )}
         </Offcanvas>
       </div>
 
